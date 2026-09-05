@@ -18,7 +18,7 @@ services:
       - "3001:3001"
     environment:
       - NODE_ENV=development
-      - DATABASE_URL=postgresql://copilot:copilot123@db:5432/copilot
+      - DATABASE_URL=postgresql://copilot:${POSTGRES_PASSWORD:-copilot123}@db:5432/copilot
       - REDIS_URL=redis://redis:6379
       - PORT=3001
     command: pnpm --filter=@copilot/api dev
