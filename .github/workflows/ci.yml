@@ -19,16 +19,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: "11.25.0"
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'pnpm'
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: "11.25.0"
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -42,16 +42,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: "11.25.0"
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'pnpm'
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: "11.25.0"
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -68,16 +68,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: "11.25.0"
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'pnpm'
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: "11.25.0"
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -94,16 +94,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: "11.25.0"
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'pnpm'
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: "11.25.0"
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -120,16 +120,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: "11.25.0"
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'pnpm'
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: "11.25.0"
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -152,7 +152,7 @@ jobs:
 
       - name: Validate docker-compose.dev.yml
         run: |
-          docker compose -f docker-compose.dev.yml config > /dev/null
+          docker compose -f docker-compose.yml -f docker-compose.dev.yml config > /dev/null
           echo "docker-compose.dev.yml is valid"
 
       - name: Validate Dockerfile syntax
