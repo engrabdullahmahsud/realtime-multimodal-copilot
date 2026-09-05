@@ -1,0 +1,31 @@
+{
+  "name": "@copilot/config",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Shared configuration for the Copilot platform",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "/tsconfig/*": "./tsconfig/*",
+    "/eslint/*": "./eslint/*",
+    "/prettier/*": "./prettier/*",
+    "/tailwind/*": "./tailwind/*"
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "lint": "eslint src --ext ts",
+    "format": "prettier --write src",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "tsup": "^8.0.0",
+    "typescript": "catalog:"
+  }
+}

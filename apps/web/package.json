@@ -1,0 +1,49 @@
+{
+  "name": "@copilot/web",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Copilot Web Application (Next.js)",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "format": "prettier --write .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
+  },
+  "dependencies": {
+    "next": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "@tanstack/react-query": "catalog:",
+    "clsx": "catalog:",
+    "tailwind-merge": "catalog:",
+    "lucide-react": "catalog:",
+    "@radix-ui/react-slot": "catalog:",
+    "class-variance-authority": "catalog:",
+    "zod": "catalog:",
+    "date-fns": "catalog:"
+  },
+  "devDependencies": {
+    "@copilot/config": "workspace:*",
+    "@copilot/types": "workspace:*",
+    "@types/node": "^20.11.0",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:",
+    "tailwindcss": "catalog:",
+    "postcss": "catalog:",
+    "autoprefixer": "catalog:",
+    "eslint": "catalog:",
+    "prettier": "catalog:",
+    "@testing-library/react": "catalog:",
+    "@testing-library/jest-dom": "catalog:",
+    "@testing-library/user-event": "catalog:",
+    "jsdom": "catalog:",
+    "@next/bundle-analyzer": "catalog:"
+  }
+}

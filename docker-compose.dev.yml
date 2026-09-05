@@ -1,0 +1,63 @@
+# Docker Compose Development Override
+# This file extends docker-compose.yml with development-specific configurations
+# including mounted volumes for hot-reloading and debug ports
+
+version: '3.8'
+
+services:
+  # API server - development mode with hot-reload
+  api:
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./apps/api/src:/app/src
+      - ./apps/api/package.json:/app/package.json
+      - ./apps/api/tsconfig.json:/app/tsconfig.json
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgresql://copilot:copilot123@db:5432/copilot
+      - REDIS_URL=redis://redis:6379
+      - PORT=3001
+    command: pnpm --filter=@copilot/api dev
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+  # Web application - development mode with hot-reload
+  web:
+    build:
+      context: ./apps/web
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./apps/web/src:/app/src
+      - ./apps/web/public:/app/public
+      - ./apps/web/package.json:/app/package.json
+      - ./apps/web/tsconfig.json:/app/tsconfig.json
+      - ./apps/web/next.config.js:/app/next.config.js
+      - ./apps/web/tailwind.config.ts:/app/tailwind.config.ts
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - NEXT_PUBLIC_API_URL=http://localhost:3001
+      - PORT=3000
+    command: pnpm --filter=@copilot/web dev
+    depends_on:
+      - api
+
+  # Database admin (optional, for development)
+  # dbadmin:
+  #   image: adminer
+  #   ports:
+  #     - "8080:8080"
+  #   depends_on:
+  #     - db
+
+volumes:
+  postgres-data:
+  redis-data:

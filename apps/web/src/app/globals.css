@@ -1,0 +1,242 @@
+/* Global CSS - Stylesheet for the Copilot Platform */
+
+/* CSS Variables - Theme and Design Tokens */
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --surface: 0 0% 100%;
+    --surface-elevated: 0 0% 100%;
+    --surface-sunken: 0 0% 98%;
+    --background-secondary: 0 0% 98%;
+    --background-tertiary: 0 0% 100%;
+    --border: 0 0% 90%;
+    --border-strong: 0 0% 80%;
+    --text: 222.2 84% 4.9%;
+    --text-muted: 215 20% 65%;
+    --text-subtle: 215 20% 55%;
+    --text-inverse: 0 0% 100%;
+    --interactive: 222.2 47% 11%;
+    --interactive-hover: 210 40% 96.5%;
+    --interactive-active: 215 25% 85%;
+    --success: 142 71% 42%;
+    --success-foreground: 0 0% 100%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+    --danger: 0 84% 60%;
+    --danger-foreground: 0 0% 100%;
+    --ai-purple-500: 264 82% 55%;
+    --ai-cyan-500: 180 61% 53%;
+    --accent: 222.2 47% 11%;
+  }
+
+  /* Dark mode */
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --surface: 222.2 84% 4.9%;
+    --surface-elevated: 222.2 47% 11%;
+    --surface-sunken: 222.2 47% 11%;
+    --background-secondary: 222.2 47% 11%;
+    --background-tertiary: 222.2 47% 15%;
+    --border: 215 27% 15%;
+    --border-strong: 215 27% 12%;
+    --text: 210 40% 98%;
+    --text-muted: 215 20% 55%;
+    --text-subtle: 215 20% 45%;
+    --text-inverse: 0 0% 100%;
+    --interactive: 210 40% 98%;
+    --interactive-hover: 215 25% 85%;
+    --interactive-active: 210 25% 70%;
+    --success: 142 71% 42%;
+    --success-foreground: 0 0% 100%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+    --danger: 0 84% 60%;
+    --danger-foreground: 0 0% 100%;
+    --ai-purple-500: 264 82% 55%;
+    --ai-cyan-500: 180 61% 53%;
+    --accent: 210 40% 98%;
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0ms !important;
+      transition-duration: 0ms !important;
+    }
+  }
+
+  /* Base styles */
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    scroll-behavior: smooth;
+    font-variant-ligatures: contextual;
+    font-variant-categorical: contextual;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    font-feature-settings: 'rlig' 1, 'calt' 1;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    margin: 0;
+    padding: 0;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 700;
+    line-height: 1.2;
+    margin-top: 0;
+    margin-bottom: 0.75rem;
+  }
+
+  p {
+    margin-top: 0;
+    margin-bottom: 1rem;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.2s ease;
+    &:hover {
+      color: hsl(var(--interactive));
+    }
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* Accessibility improvements */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .focus-visible:focus-visible {
+    outline: 2px solid hsl(var(--accent));
+    outline-offset: 2px;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+  }
+
+  button {
+    cursor: pointer;
+  }
+
+  input,
+  select,
+  textarea {
+    &:focus {
+      outline: 2px solid hsl(var(--accent));
+      outline-offset: 2px;
+    }
+  }
+
+  /* Reduced motion utilities */
+  .motion-reduce {
+    @media (prefers-reduced-motion: reduce) {
+      animation-duration: 0ms !important;
+      transition-duration: 0ms !important;
+    }
+  }
+}
+
+/* Layout utilities */
+@layer base {
+  .container {
+    width: 100%;
+    margin-right: auto;
+    margin-left: auto;
+    padding-right: 1rem;
+    padding-left: 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .container { max-width: 640px; }
+  }
+
+  @media (min-width: 768px) {
+    .container { max-width: 768px; }
+  }
+
+  @media (min-width: 1024px) {
+    .container { max-width: 1024px; }
+  }
+
+  @media (min-width: 1280px) {
+    .container { max-width: 1280px; }
+  }
+
+  /* Focus ring */
+  .focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+
+  /* Reduced motion */
+  .motion-reduce *,
+  .motion-reduce *::before,
+  .motion-reduce *::after {
+    animation-duration: 0ms !important;
+    transition-duration: 0ms !important;
+  }
+}
+
+/* Preflight - intentionally minimal */
+@layer utilities {
+  /* Remove default margin for common elements */
+  h1, h2, h3, h4, h5, h6, p, blockquote, ul, ol, dl,
+  pre, figure, table, fieldset {
+    margin: 0;
+  }
+
+  /* Remove list styles */
+  ul, ol {
+    list-style: none;
+  }
+
+  /* Make images easier to work with */
+  img {
+    max-width: 100%;
+    display: block;
+  }
+
+  /* Inherit font for form elements */
+  input,
+  button,
+  select,
+  textarea {
+    font: inherit;
+  }
+}

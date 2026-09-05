@@ -1,0 +1,81 @@
+version: '3.8'
+
+services:
+  # PostgreSQL database
+  db:
+    image: postgres:15-alpine
+    container_name: copilot-db
+    environment:
+      POSTGRES_DB: copilot
+      POSTGRES_USER: copilot
+      POSTGRES_PASSWORD: copilot123
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "copilot"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+
+  # Redis for caching and queueing
+  redis:
+    image: redis:7-alpine
+    container_name: copilot-redis
+    ports:
+      - "6379:6379"
+    command: redis-server --save "" --appendonly "yes"
+    volumes:
+      - redis-data:/data
+    networks:
+      - app-network
+
+  # API server - production build
+  api:
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile
+    container_name: copilot-api
+    environment:
+      - DATABASE_URL=postgresql://copilot:copilot123@db:5432/copilot
+      - REDIS_URL=redis://redis:6379
+      - NODE_ENV=production
+      - PORT=3001
+    ports:
+      - "3001:3001"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - app-network
+
+  # Web application - production build
+  web:
+    build:
+      context: ./apps/web
+      dockerfile: Dockerfile
+    container_name: copilot-web
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:3001
+      - NEXT_PUBLIC_API_URL=http://api:3001
+      - NODE_ENV=production
+      - PORT=3000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  postgres-data:
+  redis-data:
