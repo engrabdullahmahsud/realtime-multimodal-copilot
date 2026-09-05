@@ -7,6 +7,26 @@ import { baseEntitySchema, paginationParamsSchema, paginatedResponseSchema, sort
 export const workspaceRoleSchema = z.enum(['owner', 'admin', 'member', 'viewer']);
 export type WorkspaceRole = z.infer<typeof workspaceRoleSchema>;
 
+// AI Model preferences per workspace (defined BEFORE workspaceSettingsSchema)
+export const aiModelPreferencesSchema = z.object({
+  defaultChatModel: z.string().optional(),
+  defaultEmbeddingModel: z.string().optional(),
+  temperature: z.number().min(0).max(2).optional(),
+  maxTokens: z.number().int().positive().optional(),
+});
+
+export type AIModelPreferences = z.infer<typeof aiModelPreferencesSchema>;
+
+// Workspace settings (defined BEFORE workspaceSchema)
+export const workspaceSettingsSchema = z.object({
+  defaultDocumentVisibility: z.enum(['private', 'workspace']).default('private'),
+  allowPublicSharing: z.boolean().default(false),
+  retentionDays: z.number().int().positive().optional(),
+  aiModelPreferences: aiModelPreferencesSchema.optional(),
+});
+
+export type WorkspaceSettings = z.infer<typeof workspaceSettingsSchema>;
+
 // Workspace
 export const workspaceSchema = baseEntitySchema.extend({
   name: z.string().min(1).max(100),
@@ -17,26 +37,6 @@ export const workspaceSchema = baseEntitySchema.extend({
 });
 
 export type Workspace = z.infer<typeof workspaceSchema>;
-
-// Workspace settings
-export const workspaceSettingsSchema = z.object({
-  defaultDocumentVisibility: z.enum(['private', 'workspace']).default('private'),
-  allowPublicSharing: z.boolean().default(false),
-  retentionDays: z.number().int().positive().optional(),
-  aiModelPreferences: aiModelPreferencesSchema.optional(),
-});
-
-export type WorkspaceSettings = z.infer<typeof workspaceSettingsSchema>;
-
-// AI Model preferences per workspace
-export const aiModelPreferencesSchema = z.object({
-  defaultChatModel: z.string().optional(),
-  defaultEmbeddingModel: z.string().optional(),
-  temperature: z.number().min(0).max(2).optional(),
-  maxTokens: z.number().int().positive().optional(),
-});
-
-export type AIModelPreferences = z.infer<typeof aiModelPreferencesSchema>;
 
 // Workspace member
 export const workspaceMemberSchema = baseEntitySchema.extend({

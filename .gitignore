@@ -4,6 +4,7 @@
 node_modules/
 .pnpm-store/
 .pnpm-home/
+.npm/
 
 # Build outputs
 dist/

@@ -34,6 +34,31 @@ export type DocumentType = z.infer<typeof documentTypeSchema>;
 export const documentVisibilitySchema = z.enum(['private', 'workspace', 'public']);
 export type DocumentVisibility = z.infer<typeof documentVisibilitySchema>;
 
+// Document metadata (extracted during processing) — defined before documentSchema
+export const documentMetadataSchema = z.object({
+  pageCount: z.number().int().positive().optional(),
+  wordCount: z.number().int().nonnegative().optional(),
+  characterCount: z.number().int().nonnegative().optional(),
+  language: z.string().optional(),
+  author: z.string().optional(),
+  title: z.string().optional(),
+  subject: z.string().optional(),
+  keywords: z.array(z.string()).optional(),
+  custom: z.record(z.unknown()).optional(),
+});
+
+export type DocumentMetadata = z.infer<typeof documentMetadataSchema>;
+
+// Chunk metadata — defined before documentChunkSchema
+export const chunkMetadataSchema = z.object({
+  pageNumber: z.number().int().positive().optional(),
+  sectionTitle: z.string().optional(),
+  chunkType: z.enum(['text', 'table', 'image', 'code', 'header', 'footer']).optional(),
+  bbox: z.tuple([z.number(), z.number(), z.number(), z.number()]).optional(), // x, y, width, height
+});
+
+export type ChunkMetadata = z.infer<typeof chunkMetadataSchema>;
+
 // Document
 export const documentSchema = baseEntitySchema.extend({
   workspaceId: uuidSchema,
@@ -54,21 +79,6 @@ export const documentSchema = baseEntitySchema.extend({
 
 export type Document = z.infer<typeof documentSchema>;
 
-// Document metadata (extracted during processing)
-export const documentMetadataSchema = z.object({
-  pageCount: z.number().int().positive().optional(),
-  wordCount: z.number().int().nonnegative().optional(),
-  characterCount: z.number().int().nonnegative().optional(),
-  language: z.string().optional(),
-  author: z.string().optional(),
-  title: z.string().optional(),
-  subject: z.string().optional(),
-  keywords: z.array(z.string()).optional(),
-  custom: z.record(z.unknown()).optional(),
-});
-
-export type DocumentMetadata = z.infer<typeof documentMetadataSchema>;
-
 // Document chunk (for RAG)
 export const documentChunkSchema = baseEntitySchema.extend({
   documentId: uuidSchema,
@@ -81,15 +91,6 @@ export const documentChunkSchema = baseEntitySchema.extend({
 });
 
 export type DocumentChunk = z.infer<typeof documentChunkSchema>;
-
-export const chunkMetadataSchema = z.object({
-  pageNumber: z.number().int().positive().optional(),
-  sectionTitle: z.string().optional(),
-  chunkType: z.enum(['text', 'table', 'image', 'code', 'header', 'footer']).optional(),
-  bbox: z.tuple([z.number(), z.number(), z.number(), z.number()]).optional(), // x, y, width, height
-});
-
-export type ChunkMetadata = z.infer<typeof chunkMetadataSchema>;
 
 // API request/response types
 export const uploadDocumentSchema = z.object({

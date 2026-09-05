@@ -40,6 +40,19 @@ export const citationSchema = z.object({
 
 export type Citation = z.infer<typeof citationSchema>;
 
+// Conversation settings (defined BEFORE conversationSchema to avoid forward reference)
+export const conversationSettingsSchema = z.object({
+  temperature: z.number().min(0).max(2).default(0.7),
+  maxTokens: z.number().int().positive().default(4096),
+  retrievalEnabled: z.boolean().default(true),
+  maxRetrievedChunks: z.number().int().positive().max(20).default(5),
+  similarityThreshold: z.number().min(0).max(1).default(0.7),
+  citationStyle: z.enum(['inline', 'footer', 'sidebar']).default('inline'),
+  streamResponse: z.boolean().default(true),
+});
+
+export type ConversationSettings = z.infer<typeof conversationSettingsSchema>;
+
 // Message
 export const messageSchema = baseEntitySchema.extend({
   conversationId: uuidSchema,
@@ -71,24 +84,12 @@ export const conversationSchema = baseEntitySchema.extend({
 
 export type Conversation = z.infer<typeof conversationSchema>;
 
-// Conversation settings
-export const conversationSettingsSchema = z.object({
-  temperature: z.number().min(0).max(2).default(0.7),
-  maxTokens: z.number().int().positive().default(4096),
-  retrievalEnabled: z.boolean().default(true),
-  maxRetrievedChunks: z.number().int().positive().max(20).default(5),
-  similarityThreshold: z.number().min(0).max(1).default(0.7),
-  citationStyle: z.enum(['inline', 'footer', 'sidebar']).default('inline'),
-  streamResponse: z.boolean().default(true),
-});
-
-export type ConversationSettings = z.infer<typeof conversationSettingsSchema>;
-
 // API request/response types
 export const createConversationSchema = z.object({
   workspaceId: uuidSchema,
   title: z.string().min(1).max(200),
   description: z.string().max(1000).optional(),
+  ownerId: uuidSchema,
   model: z.string().optional(),
   systemPrompt: z.string().optional(),
   settings: conversationSettingsSchema.partial().optional(),
@@ -116,6 +117,12 @@ export const createMessageSchema = z.object({
   content: z.array(messageContentSchema).min(1),
   // For user messages, optionally specify which documents to include in context
   documentIds: z.array(uuidSchema).optional(),
+  citations: z.array(citationSchema).optional(),
+  model: z.string().optional(),
+  tokensUsed: z.number().int().nonnegative().optional(),
+  processingTimeMs: z.number().int().nonnegative().optional(),
+  error: z.string().optional(),
+  metadata: z.record(z.unknown()).optional(),
 });
 
 export type CreateMessageInput = z.infer<typeof createMessageSchema>;
