@@ -31,7 +31,7 @@ This milestone established the foundational development environment. All deliver
 - Database schema (conversations, messages tables) via Drizzle ORM
 - All API keys server-side only; no real secrets
 
-## Current Milestone: Database Migrations & Seeding
+## Completed Milestone: Database Migrations & Seeding
 
 **Objective**: Production-ready database schema, migrations, and development seeding.
 
@@ -43,28 +43,43 @@ This milestone established the foundational development environment. All deliver
 - Unique indexes for uniqueness constraints
 - `defaultRandom()` UUID primary keys
 - `defaultNow()` timestamps on all tables
-- Proper nullable/required field definitions
 - Drizzle migration SQL generated via `drizzle-kit generate:pg`
 - Migration output at `drizzle/0000_aromatic_meteorite.sql`
-- Migration journal at `drizzle/meta/_journal.json`
-- Database seed script (`scripts/seed.ts`) with:
-  - Production safety gate (refuses to run in prod without `--confirm-production`)
-  - Idempotent operations (skip if data already exists)
-  - Creates: default user, workspace, membership, sample conversation with messages, sample document
+- Database seed script (`scripts/seed.ts`) with production safety gate
 - `.env.example` with DATABASE_URL template and commented-out AI provider keys
 - Database scripts added to root `package.json` (`db:generate`, `db:migrate`, `db:studio`, `db:seed`)
-- Fixed: Zod schema forward reference ordering (conversationSettings, aiModelPreferences, documentMetadata, chunkMetadata)
-- Fixed: API index.ts (health route, variable shadowing, Hono methods, drizzle-orm/postgres.js import)
-- Fixed: docker-compose.yml duplicate `NEXT_PUBLIC_API_URL`
-- Fixed: Moon/Sun icon components (JSX syntax errors)
-- Fixed: `.gitignore` coverage (added `.npm/`)
-- TypeScript compilation passes for `packages/types` and `apps/api`
 
-### What Remains Blocked
+## Current Milestone: Authentication & Authorization
 
-- `drizzle-kit push:pg` / `drizzle-kit migrate:pg` — requires live PostgreSQL connection
-- Seed script execution — requires live PostgreSQL connection
-- `pnpm install` — extremely slow network (registry timeouts); workspace symlinks not fully established in this environment
+**Objective**: Production-oriented authentication foundation with session-based auth, password hashing, middleware, and frontend auth flow.
+
+### What Was Built
+
+- **Database**: sessions table with token, userId, expiresAt; users table enhanced with avatarUrl, emailVerified
+- **Migration**: `drizzle/0001_perfect_thunderbolts.sql` — sessions table + users columns
+- **Password hashing**: Node.js built-in `crypto.scrypt` (zero external dependencies, timing-safe comparison)
+- **Session management**: Database-backed sessions, 7-day expiration, auto-cleanup of expired sessions
+- **Auth middleware**: `requireAuth` (cookie-based session validation), `requireWorkspaceRole` (role hierarchy enforcement)
+- **Auth routes**: POST /auth/register, POST /auth/login, POST /auth/logout, GET /auth/me
+- **Zod validation**: registerSchema (8+ chars, uppercase, lowercase, number), loginSchema
+- **Frontend**: AuthProvider context, login page, register page, AuthGuard, UserMenu with logout
+- **Root layout**: AuthProvider wrapping, header with navigation and user menu
+- **Protected routes**: All API routes after auth routes require valid session
+- **All existing pages**: Updated with AuthGuard protection
+
+### Security Features
+
+- Passwords never returned in API responses (explicit field selection)
+- Passwords never stored in plaintext (scrypt hashing)
+- Timing-safe password comparison (timingSafeEqual)
+- Timing-safe user enumeration prevention (dummy hash on unknown email)
+- Same error message for wrong email and wrong password
+- HTTP-only cookies (not accessible via JavaScript)
+- SameSite=Strict (CSRF protection)
+- Secure flag in production mode
+- Session tokens regenerated on each login (no session fixation)
+- Session invalidated on logout (DB row deleted + cookie cleared)
+- Orphaned session cleanup on validation failure
 
 ## Following Milestone: Document Management
 

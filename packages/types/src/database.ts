@@ -55,12 +55,14 @@ export const invitationStatusEnum = pgEnum('invitation_status', [
 // Tables
 // ============================================================
 
-// Users table (auth/authorization layer - future)
+// Users table
 export const users = pgTable('users', {
   id: uuid('id').primaryKey().defaultRandom(),
   email: text('email').notNull().unique(),
   name: text('name').notNull(),
   passwordHash: text('password_hash').notNull(),
+  avatarUrl: text('avatar_url'),
+  emailVerified: boolean('email_verified').default(false),
   environment: text('environment').default('development'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
@@ -199,6 +201,18 @@ export const messages = pgTable('messages', {
   roleIdx: index('messages_role_idx').on(table.role),
 }));
 
+// Sessions table (authentication)
+export const sessions = pgTable('sessions', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  token: text('token').notNull().unique(),
+  expiresAt: timestamp('expires_at').notNull(),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+}, (table) => ({
+  tokenIdx: uniqueIndex('sessions_token_idx').on(table.token),
+  userIdx: index('sessions_user_id_idx').on(table.userId),
+}));
+
 // ============================================================
 // Relations
 // ============================================================
@@ -208,6 +222,11 @@ export const usersRelations = relations(users, ({ many }) => ({
   workspaceMembers: many(workspaceMembers),
   documents: many(documents),
   conversations: many(conversations),
+  sessions: many(sessions),
+}));
+
+export const sessionsRelations = relations(sessions, ({ one }) => ({
+  user: one(users, { fields: [sessions.userId], references: [users.id] }),
 }));
 
 export const workspacesRelations = relations(workspaces, ({ many, one }) => ({

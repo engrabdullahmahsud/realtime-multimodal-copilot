@@ -1,14 +1,19 @@
+'use client';
+
 import { useEffect, useState } from 'react';
-import { usePathname } from 'next/navigation';
-import { useSearchParams } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { useAuth } from '@/lib/auth';
+import { AuthGuard } from '@/components/auth/AuthGuard';
 
 export default function DocumentsPage() {
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
   const [documents, setDocuments] = useState<Array<{id: string; name: string}>>([]);
   const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
 
   useEffect(() => {
+    if (!user) return;
+    
     fetch('/api/documents')
       .then(res => res.json())
       .then(data => {
@@ -18,22 +23,35 @@ export default function DocumentsPage() {
       .catch(() => {
         setLoading(false);
       });
-  }, []);
+  }, [user]);
 
   if (loading) return <div>Loading documents...</div>;
 
   return (
-    <div className="p-6">
-      <h1 className="mb-4 text-2xl font-bold">Documents</h1>
-      <div className="space-y-4">
-        {documents.map((doc) => (
-          <div key={doc.id} className="p-4 border rounded">
-            <h3 className="font-medium">{doc.name}</h3>
-            <p className="text-sm text-muted-foreground">ID: {doc.id}</p>
-          </div>
-        ))}
-        {documents.length === 0 && <p className="text-muted-foreground">No documents found</p>}
+    <AuthGuard>
+      <div className="p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h1 className="text-2xl font-bold">Documents</h1>
+          <Button variant="primary">Upload Document</Button>
+        </div>
+        <div className="space-y-4">
+          {documents.length === 0 ? (
+            <Card className="p-6 text-center">
+              <p className="text-muted mb-4">No documents found</p>
+              <Button variant="primary">Upload Document</Button>
+            </Card>
+          ) : (
+            <ul className="space-y-2">
+              {documents.map((doc) => (
+                <li key={doc.id} className="p-4 border rounded">
+                  <h3 className="font-medium">{doc.name}</h3>
+                  <p className="text-sm text-muted-foreground">ID: {doc.id}</p>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       </div>
-    </div>
+    </AuthGuard>
   );
 }

@@ -1,12 +1,24 @@
+'use client';
+
 import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
+import { useAuth } from '@/lib/auth';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 export default function HomePage() {
   const pathname = usePathname();
+  const { user, loading: authLoading } = useAuth();
   const [workspaces, setWorkspaces] = useState<Array<{id: string; name: string}>>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Only fetch workspaces if authenticated
+    if (!user) {
+      setLoading(false);
+      return;
+    }
+    
     fetch('/api/workspaces')
       .then(res => res.json())
       .then(data => {
@@ -16,34 +28,50 @@ export default function HomePage() {
       .catch(() => {
         setLoading(false);
       });
-  }, []);
+  }, [user]);
 
-  if (loading) return <div>Loading...</div>;
+  if (authLoading) return <div className="p-6">Loading...</div>;
 
   return (
     <div className="p-6 max-w-md">
       <h1 className="mb-4 text-2xl font-bold">Real-Time Multimodal Copilot</h1>
-      <p className="text-muted-foreground">Welcome to your AI workspace</p>
+      <p className="text-muted-foreground mb-6">Welcome to your AI workspace</p>
       
-      <div className="mt-6">
-        <h2>Workspaces</h2>
-        {loading ? <p>Loading workspaces...</p> : (
-          <ul className="space-y-2">
-            {workspaces.map((ws) => (
-              <li key={ws.id} className="p-2 rounded hover:bg-muted">
-                <a href={`/workspaces/${ws.id}`} className="text-primary hover underline">
-                  {ws.name}
-                </a>
-              </li>
-            ))}
-          </ul>
-        )}
-        
-        <div className="mt-6">
-          <a href="/conversations" className="btn-primary">View Conversations</a>
-          <a href="/workspaces" className="btn-secondary ml-2">Manage Workspaces</a>
+      {!user ? (
+        <div className="space-y-4">
+          <p className="text-muted">Sign in to access your workspaces and conversations.</p>
+          <div className="flex gap-4">
+            <Link href="/auth/login" className="btn-primary">Sign in</Link>
+            <Link href="/auth/register" className="btn-secondary">Create account</Link>
+          </div>
         </div>
-      </div>
+      ) : (
+        <div>
+          <div className="mb-6">
+            <h2>Workspaces</h2>
+            {loading ? <p>Loading workspaces...</p> : (
+              <ul className="space-y-2">
+                {workspaces.map((ws) => (
+                  <li key={ws.id} className="p-2 rounded hover:bg-muted">
+                    <Link href={`/workspaces/${ws.id}`} className="text-primary hover:underline">
+                      {ws.name}
+                    </Link>
+                  </li>
+                ))}
+                {workspaces.length === 0 && (
+                  <li className="p-2 rounded bg-muted text-muted">No workspaces yet</li>
+                )}
+              </ul>
+            )}
+          </div>
+          
+          <div className="flex gap-4">
+            <Link href="/conversations" className="btn-primary">View Conversations</Link>
+            <Link href="/workspaces" className="btn-secondary">Manage Workspaces</Link>
+            <Link href="/documents" className="btn-secondary">Documents</Link>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

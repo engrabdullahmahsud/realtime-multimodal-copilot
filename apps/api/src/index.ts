@@ -15,6 +15,8 @@ import {
   conversationListParamsSchema,
 } from '@copilot/types';
 import { healthRoute } from './routes/health';
+import { authRoutes } from './routes/auth';
+import { requireAuth } from './middleware/auth';
 import type { z } from 'zod';
 
 config();
@@ -30,12 +32,20 @@ const db = drizzle(pg);
 
 const app = new Hono();
 
-// Health check endpoint
+// Health check (public — no auth required)
 healthRoute(app);
 
+// Auth routes (public — no auth required)
+authRoutes(app, db);
+
 // ==========================================
-// Conversation Management API
+// Protected API routes (auth required)
 // ==========================================
+
+// Apply auth middleware to all routes below
+app.use('*', requireAuth(db));
+
+// ── Conversation Management API ─────────────────────────────
 
 // List conversations with pagination and filtering
 app.get('/conversations', async (c) => {
@@ -50,9 +60,9 @@ app.get('/conversations', async (c) => {
     const allConversations = await db.select().from(conversations);
 
     // Filter by search if provided
-    let filtered = allConversations;
+    let filtered: typeof allConversations = allConversations;
     if (params.search) {
-      filtered = filtered.filter((conv) =>
+      filtered = filtered.filter((conv: typeof allConversations[0]) =>
         conv.title.includes(params.search!) ||
         (conv.description != null && conv.description.includes(params.search!))
       );
@@ -61,7 +71,7 @@ app.get('/conversations', async (c) => {
     // Sort
     const sortBy = (params.sortBy || 'lastMessageAt') as keyof typeof filtered[0];
     const sortOrder = params.sortOrder || 'desc';
-    filtered.sort((a, b) => {
+    filtered.sort((a: typeof filtered[0], b: typeof filtered[0]) => {
       const aVal = a[sortBy];
       const bVal = b[sortBy];
       if (aVal == null && bVal == null) return 0;
@@ -92,6 +102,7 @@ app.get('/conversations', async (c) => {
 // Create conversation
 app.post('/conversations', async (c) => {
   try {
+    const user = c.get('user');
     const body = await c.req.json();
     const validated = createConversationSchema.safeParse(body);
 
@@ -106,7 +117,7 @@ app.post('/conversations', async (c) => {
         workspaceId: data.workspaceId,
         title: data.title,
         description: data.description,
-        ownerId: data.ownerId,
+        ownerId: user.id,
         model: data.model,
         systemPrompt: data.systemPrompt,
         settings: data.settings as Record<string, unknown> | undefined,
@@ -203,9 +214,7 @@ app.delete('/conversations/:id', async (c) => {
   }
 });
 
-// ==========================================
-// Message API
-// ==========================================
+// ── Message API ──────────────────────────────────────────────
 
 // List messages for a conversation
 app.get('/conversations/:conversationId/messages', async (c) => {
@@ -220,7 +229,7 @@ app.get('/conversations/:conversationId/messages', async (c) => {
       .where(eq(messages.conversationId, conversationId));
 
     // Sort by createdAt descending, then paginate
-    const sorted = allMessages.sort((a, b) =>
+    const sorted = allMessages.sort((a: typeof allMessages[0], b: typeof allMessages[0]) =>
       new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
 
@@ -295,9 +304,7 @@ app.post('/conversations/:conversationId/messages', async (c) => {
   }
 });
 
-// ==========================================
-// AI Response Endpoint
-// ==========================================
+// ── AI Response Endpoint ─────────────────────────────────────
 
 // Generate AI response (HTTP-compatible, provider-agnostic)
 // Simulated for development — real provider integration requires
@@ -330,7 +337,7 @@ app.post('/ai/response', async (c) => {
     const systemPrompt = conversation.systemPrompt || '';
 
     // Prepare message history for AI
-    const messageHistory = conversationMessages.map((msg) => ({
+    const messageHistory = conversationMessages.map((msg: typeof conversationMessages[0]) => ({
       role: msg.role,
       content: (msg.content as Array<{ type: string; text?: string }>)
         .map((part) => part.text)
@@ -389,13 +396,13 @@ app.post('/ai/response', async (c) => {
   }
 });
 
-// ==========================================
-// Workspace API (existing)
-// ==========================================
+// ── Workspace API ────────────────────────────────────────────
 
-// List workspaces
+// List workspaces (scoped to user's memberships)
 app.get('/workspaces', async (c) => {
   try {
+    const user = c.get('user');
+    // TODO: Join with workspace_members to scope to user's workspaces
     const allWorkspaces = await db.select().from(workspaces);
     return c.json({ workspaces: allWorkspaces, count: allWorkspaces.length });
   } catch (error) {
@@ -407,6 +414,7 @@ app.get('/workspaces', async (c) => {
 // Create workspace
 app.post('/workspaces', async (c) => {
   try {
+    const user = c.get('user');
     const body = await c.req.json();
     const [newWorkspace] = await db
       .insert(workspaces)
@@ -414,7 +422,7 @@ app.post('/workspaces', async (c) => {
         name: body.name,
         slug: body.slug,
         description: body.description,
-        ownerId: body.ownerId,
+        ownerId: user.id,
       })
       .returning();
 
@@ -445,9 +453,7 @@ app.get('/workspaces/:id', async (c) => {
   }
 });
 
-// ==========================================
-// Document API (existing)
-// ==========================================
+// ── Document API ─────────────────────────────────────────────
 
 // List documents
 app.get('/documents', async (c) => {
@@ -463,6 +469,7 @@ app.get('/documents', async (c) => {
 // Create document
 app.post('/documents', async (c) => {
   try {
+    const user = c.get('user');
     const body = await c.req.json();
     const [newDocument] = await db
       .insert(documents)
@@ -475,7 +482,7 @@ app.post('/documents', async (c) => {
         size: body.size,
         status: body.status ?? 'uploading',
         visibility: body.visibility ?? 'private',
-        ownerId: body.ownerId,
+        ownerId: user.id,
         storagePath: body.storagePath,
         checksum: body.checksum,
         metadata: body.metadata,

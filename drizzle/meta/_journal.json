@@ -8,6 +8,13 @@
       "when": 1788584746462,
       "tag": "0000_aromatic_meteorite",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1788588483488,
+      "tag": "0001_perfect_thunderbolts",
+      "breakpoints": true
     }
   ]
 }

@@ -1,5 +1,5 @@
 import type { Config } from 'tailwindcss';
-import baseConfig from '@copilot/config/tailwind/base';
+import baseConfig from '../../packages/config/tailwind/base';
 
 const config: Config = {
   ...baseConfig,

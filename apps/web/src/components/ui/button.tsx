@@ -1,13 +1,12 @@
 'use client';
 
 import { useTheme } from '@/hooks/useTheme';
+import { clsx } from 'clsx';
 
-export interface ButtonProps {
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'destructive';
   size?: 'sm' | 'md' | 'lg';
-  className?: string;
-  onClick?: (e: React.MouseEvent) => void;
 }
 
 export function Button({ 
@@ -15,7 +14,8 @@ export function Button({
   variant = 'primary', 
   size = 'md', 
   className = '', 
-  onClick 
+  onClick,
+  ...props
 }: ButtonProps) {
   const { isDark, themeMode } = useTheme();
   
@@ -48,9 +48,8 @@ export function Button({
   return (
     <button 
       className={classes}
-      variant={variant}
-      size={size}
       onClick={onClick}
+      {...props}
     >
       {children}
     </button>

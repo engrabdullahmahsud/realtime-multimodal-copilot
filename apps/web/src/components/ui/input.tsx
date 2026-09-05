@@ -12,6 +12,9 @@ export interface InputProps {
   className?: string;
   error?: boolean;
   disabled?: boolean;
+  required?: boolean;
+  minLength?: number;
+  autoComplete?: string;
 }
 
 export function Input({
@@ -24,6 +27,10 @@ export function Input({
   className = '',
   error = false,
   disabled = false,
+  required = false,
+  minLength,
+  autoComplete,
+  ...props
 }: InputProps) {
   const { isDark } = useTheme();
 
@@ -45,6 +52,10 @@ export function Input({
         placeholder={placeholder}
         className={classes}
         disabled={disabled}
+        required={required}
+        minLength={minLength}
+        autoComplete={autoComplete}
+        {...props}
       />
       {error && label && <p className="mt-1 text-xs text-danger">Please fix this field</p>}
     </div>
