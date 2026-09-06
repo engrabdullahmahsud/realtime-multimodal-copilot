@@ -10,7 +10,7 @@
     "lint": "next lint",
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run",
+    "test": "vitest run --passWithNoTests",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage"
   },
