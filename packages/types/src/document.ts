@@ -1,6 +1,7 @@
 // Document-related types
 
 import { z } from 'zod';
+
 import { baseEntitySchema, paginationParamsSchema, paginatedResponseSchema, sortParamsSchema, uuidSchema } from './common';
 
 // Document status
@@ -93,14 +94,20 @@ export const documentChunkSchema = baseEntitySchema.extend({
 export type DocumentChunk = z.infer<typeof documentChunkSchema>;
 
 // API request/response types
-export const uploadDocumentSchema = z.object({
+export const createDocumentSchema = z.object({
   workspaceId: uuidSchema,
   name: z.string().min(1).max(255).optional(),
+  originalName: z.string().min(1).max(255),
+  type: documentTypeSchema,
+  mimeType: z.string(),
+  size: z.number().int().nonnegative(),
   visibility: documentVisibilitySchema.default('private'),
+  storagePath: z.string().optional(),
+  checksum: z.string().optional(),
   metadata: documentMetadataSchema.partial().optional(),
 });
 
-export type UploadDocumentInput = z.infer<typeof uploadDocumentSchema>;
+export type CreateDocumentInput = z.infer<typeof createDocumentSchema>;
 
 export const updateDocumentSchema = z.object({
   name: z.string().min(1).max(255).optional(),
@@ -115,6 +122,7 @@ export const documentListParamsSchema = paginationParamsSchema.merge(sortParamsS
   type: documentTypeSchema.optional(),
   status: documentStatusSchema.optional(),
   visibility: documentVisibilitySchema.optional(),
+  workspaceId: uuidSchema.optional(),
 });
 
 export type DocumentListParams = z.infer<typeof documentListParamsSchema>;

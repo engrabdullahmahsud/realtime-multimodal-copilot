@@ -1,7 +1,5 @@
 'use client';
 
-import { useTheme } from '@/hooks/useTheme';
-
 export interface InputProps {
   label?: string;
   placeholder?: string;
@@ -32,9 +30,6 @@ export function Input({
   autoComplete,
   ...props
 }: InputProps) {
-  const { isDark } = useTheme();
-
-  const baseClasses = 'w-full rounded-md border border-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent';
   const borderClasses = error ? 'border-danger' : 'border-strong';
   const sizeClasses = size === 'sm' ? 'px-2.5 py-1' : size === 'lg' ? 'px-5 py-2' : 'px-3.5 py-1.5';
   const disabledClasses = disabled ? 'opacity-60 cursor-not-allowed' : '';
@@ -48,7 +43,9 @@ export function Input({
         id="input"
         type={type}
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(e) => {
+          onChange(e.target.value);
+        }}
         placeholder={placeholder}
         className={classes}
         disabled={disabled}

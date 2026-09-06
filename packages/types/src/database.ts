@@ -1,3 +1,4 @@
+import { relations } from 'drizzle-orm';
 import {
   pgTable,
   text,
@@ -10,7 +11,6 @@ import {
   uniqueIndex,
   pgEnum,
 } from 'drizzle-orm/pg-core';
-import { relations } from 'drizzle-orm';
 
 // ============================================================
 // Enums (type-safe, enforced at DB level)

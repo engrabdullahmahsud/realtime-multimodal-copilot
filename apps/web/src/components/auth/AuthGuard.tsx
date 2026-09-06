@@ -1,14 +1,12 @@
 'use client';
 
-import { useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
+import { useEffect } from 'react';
+
 import { useAuth } from '@/lib/auth';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
 
 interface AuthGuardProps {
   children: React.ReactNode;
-  requiredRole?: 'viewer' | 'member' | 'admin' | 'owner';
   fallback?: React.ReactNode;
 }
 
@@ -20,12 +18,11 @@ interface AuthGuardProps {
  */
 export function AuthGuard({
   children,
-  requiredRole,
   fallback,
 }: AuthGuardProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const { user, loading, refresh } = useAuth();
+  const { user, loading } = useAuth();
 
   useEffect(() => {
     if (!loading && !user) {

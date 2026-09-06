@@ -13,14 +13,17 @@
  * - Rate limiting should be added in production
  */
 
-import type { Hono } from 'hono';
 import { eq } from 'drizzle-orm';
-import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
-import { users } from '@copilot/types/database';
+
 import { registerSchema, loginSchema } from '@copilot/types';
+import { users } from '@copilot/types/database';
+
 import { hashPassword, verifyPassword } from '../lib/password';
 import { createSession, deleteSession, SESSION_COOKIE_NAME } from '../lib/session';
 import { requireAuth } from '../middleware/auth';
+
+import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
+import type { Hono } from 'hono';
 
 export function authRoutes(app: Hono, db: PostgresJsDatabase) {
   // ── Register ────────────────────────────────────────────────

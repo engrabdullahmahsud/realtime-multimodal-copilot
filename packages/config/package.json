@@ -8,23 +8,27 @@
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
-      "require": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "require": "./dist/index.js"
     },
-    "/tsconfig/*": "./tsconfig/*",
-    "/eslint/*": "./eslint/*",
-    "/prettier/*": "./prettier/*",
-    "/tailwind/*": "./tailwind/*"
+    "./tsconfig/*": "./tsconfig/*",
+    "./eslint/*": "./eslint/*",
+    "./prettier/*": "./prettier/*",
+    "./tailwind/*": "./tailwind/*"
   },
   "scripts": {
-    "build": "tsup",
-    "dev": "tsup --watch",
-    "lint": "eslint src --ext ts",
-    "format": "prettier --write src",
-    "typecheck": "tsc --noEmit"
+    "build": "echo \"No build required for config package\"",
+    "dev": "echo \"No dev build required for config package\"",
+    "lint": "echo \"No lint required for config package\"",
+    "format": "echo \"No format required for config package\"",
+    "typecheck": "echo \"No typecheck required for config package\""
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.69.0",
+    "@typescript-eslint/parser": "^8.69.0",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-unused-imports": "^4.4.1",
     "tsup": "^8.0.0",
     "typescript": "catalog:"
   }

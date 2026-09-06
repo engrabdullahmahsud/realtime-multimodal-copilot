@@ -10,10 +10,16 @@ packages:
   # Services (future)
   # - 'services/*'
 
-  # Workspace settings
 allowBuilds:
-  es5-ext: set this to true or false
-  esbuild: set this to true or false
+  es5-ext: true
+  esbuild: true
+  unrs-resolver: true
+
+# Hoist drizzle-orm to root to avoid duplicate instances
+hoistPattern:
+  - drizzle-orm
+  - drizzle-orm/**
+
 catalog:
   # Shared dependency versions for consistency across packages
   typescript: ^5.3.0
@@ -48,7 +54,7 @@ catalog:
   '@aws-sdk/client-s3': ^3.490.0
   '@aws-sdk/s3-request-presigner': ^3.490.0
   openai: ^4.26.0
-  '@anthropic-ai/sdk': ^0.18.0
+  '@anthropic-ai+sdk': ^0.18.0
   zod-to-json-schema: ^3.22.0
   '@mswjs/data': ^0.14.0
   msw: ^2.1.0
@@ -60,3 +66,12 @@ catalog:
   dotenv: ^16.4.0
   '@types/react': ^18.2.0
   '@types/react-dom': ^18.2.0
+
+packageExtensions:
+  drizzle-orm@0.29.5:
+    peerDependencies:
+      '@neondatabase/serverless': '>=0.1'
+      '@types/pg': '>=8'
+      '@types/react': '>=18'
+      postgres: '>=3'
+      react: '>=18'

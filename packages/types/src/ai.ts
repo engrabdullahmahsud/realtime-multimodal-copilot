@@ -1,6 +1,7 @@
 // AI-related types
 
 import { z } from 'zod';
+
 import { baseEntitySchema, uuidSchema } from './common';
 
 // Model providers

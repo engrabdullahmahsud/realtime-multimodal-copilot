@@ -1,14 +1,15 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { useAuth } from '@/lib/auth';
-import { Input } from '@/components/ui/input';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Suspense, useState } from 'react';
+
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { useAuth } from '@/lib/auth';
 
-export default function RegisterPage() {
+function RegisterForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { register, loading, error } = useAuth();
@@ -19,7 +20,7 @@ export default function RegisterPage() {
   const [confirmPassword, setConfirmPassword] = useState('');
 
   // Redirect after registration
-  const callbackUrl = searchParams.get('callbackUrl') || '/';
+  const callbackUrl = searchParams.get('callbackUrl') ?? '/';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -107,5 +108,13 @@ export default function RegisterPage() {
         </div>
       </Card>
     </div>
+  );
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
+      <RegisterForm />
+    </Suspense>
   );
 }

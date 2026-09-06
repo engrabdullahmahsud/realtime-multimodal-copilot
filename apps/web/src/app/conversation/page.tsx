@@ -1,26 +1,24 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { usePathname, useSearchParams } from 'next/navigation';
+
+import { AuthGuard } from '@/components/auth/AuthGuard';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { useAuth } from '@/lib/auth';
-import { AuthGuard } from '@/components/auth/AuthGuard';
 
 export default function ConversationPage() {
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
   const [conversations, setConversations] = useState<Array<{id: string; title: string; messageCount: number}>>([]);
   const [loading, setLoading] = useState(true);
-  const { user, refresh } = useAuth();
+  const { user } = useAuth();
 
   useEffect(() => {
-    if (!user) return;
+    if (!user) {return;}
     
     fetch('/api/conversations')
       .then(res => res.json())
       .then(data => {
-        setConversations(data.items || []);
+        setConversations(data.items ?? []);
         setLoading(false);
       })
       .catch(() => {
@@ -28,7 +26,7 @@ export default function ConversationPage() {
       });
   }, [user]);
 
-  if (loading) return <div>Loading conversations...</div>;
+  if (loading) {return <div>Loading conversations...</div>;}
 
   return (
     <AuthGuard>

@@ -13,8 +13,8 @@ module.exports = {
     ecmaFeatures: {
       jsx: true,
     },
-    project: ['./tsconfig.json', './tsconfig.*.json'],
-    tsconfigRootDir: __dirname,
+    project: './tsconfig.json',
+    tsconfigRootDir: process.cwd(),
   },
   plugins: [
     '@typescript-eslint',
@@ -25,7 +25,7 @@ module.exports = {
     'import/resolver': {
       typescript: {
         alwaysTryTypes: true,
-        project: ['./tsconfig.json', './tsconfig.*.json'],
+        project: ['./tsconfig.json'],
       },
       node: {
         extensions: ['.js', '.jsx', '.ts', '.tsx'],

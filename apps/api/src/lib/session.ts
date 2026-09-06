@@ -8,10 +8,11 @@
  */
 
 import { eq, and, gt } from 'drizzle-orm';
-import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
-import { sessions, users, workspaceMembers } from '@copilot/types/database';
+
 import type { PublicUser } from '@copilot/types';
-import type { workspaceMemberRoleEnum } from '@copilot/types/database';
+import { sessions, users, workspaceMembers } from '@copilot/types/database';
+
+import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 
 // Session duration: 7 days
 const SESSION_DURATION_MS = 7 * 24 * 60 * 60 * 1000;
@@ -106,6 +107,30 @@ export async function deleteAllUserSessions(
 }
 
 /**
+ * Get current workspace owner ID
+ */
+export async function getCurrentOwnerId(
+  db: PostgresJsDatabase,
+  workspaceId: string
+): Promise<string> {
+  const [owner] = await db
+    .select({ userId: workspaceMembers.userId })
+    .from(workspaceMembers)
+    .where(
+      and(
+        eq(workspaceMembers.workspaceId, workspaceId),
+        eq(workspaceMembers.role, 'owner')
+      )
+    )
+    .limit(1);
+
+  if (!owner) {
+    throw new Error('No owner found for this workspace');
+  }
+  return owner.userId;
+}
+
+/**
  * Check if a user is a member of a workspace and return their role.
  */
 export async function getWorkspaceMembership(
@@ -124,7 +149,7 @@ export async function getWorkspaceMembership(
     )
     .limit(1);
 
-  if (!member || !member.role) return null;
+  if (!member?.role) {return null;}
   return { role: member.role };
 }
 

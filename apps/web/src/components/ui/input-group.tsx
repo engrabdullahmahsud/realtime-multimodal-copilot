@@ -1,7 +1,5 @@
 'use client';
 
-import { useTheme } from '@/hooks/useTheme';
-
 export interface InputGroupProps {
   children: React.ReactNode;
   className?: string;

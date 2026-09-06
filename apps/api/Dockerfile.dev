@@ -1,18 +1,31 @@
-# Development Dockerfile for API server
+# Development Dockerfile for API server - pnpm workspace aware
 FROM node:20-alpine
 
 WORKDIR /app
 
-# Install dependencies with pnpm
-COPY package*.json ./
-RUN npm install -g pnpm@11.25.0 && pnpm install --frozen-lockfile
+# Install pnpm
+RUN npm install -g pnpm@11.25.0
 
-# Copy source code
-COPY src ./src
-COPY tsconfig.json .
-COPY .env.example ./
+# Copy workspace files
+COPY pnpm-workspace.yaml ./
+COPY pnpm-lock.yaml ./
+COPY package.json ./
+
+# Copy workspace package manifests
+COPY packages/ ./packages/
+COPY apps/api/package.json ./apps/api/
+
+# Install all dependencies
+RUN pnpm install --frozen-lockfile --filter @copilot/api...
+
+# Copy API source code
+COPY apps/api/src ./apps/api/src
+COPY apps/api/tsconfig.json ./apps/api/
+
+WORKDIR /app/apps/api
 
 # Expose port
-EXPOSE 3001
+EXPOSE 3002
 ENV NODE_ENV=development
+ENV PORT=3002
 CMD ["pnpm", "run", "dev"]

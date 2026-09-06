@@ -1,12 +1,10 @@
 'use client';
 
 import { useTheme } from '@/hooks/useTheme';
-import { useMemo } from 'react';
 import { SunIcon } from '@/icons/sun';
-import { MoonIcon } from '@/icons/moon';
 
 export function ThemeToggle() {
-  const { isDark, toggleTheme } = useTheme();
+  const { toggleTheme } = useTheme();
   
   return (
     <div className="flex items-center space-x-2">

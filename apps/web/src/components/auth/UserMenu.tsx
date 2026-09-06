@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { useAuth } from '@/lib/auth';
+
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { useAuth } from '@/lib/auth';
 
 export function UserMenu() {
   const { user, logout } = useAuth();
@@ -22,7 +23,7 @@ export function UserMenu() {
       document.addEventListener('mousedown', handleClickOutside);
     }
 
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    return () => { document.removeEventListener('mousedown', handleClickOutside); };
   }, [open]);
 
   const handleLogout = async () => {
@@ -30,11 +31,11 @@ export function UserMenu() {
     setOpen(false);
   };
 
-  if (!user) return null;
+  if (!user) {return null;}
 
   return (
     <div className="relative" ref={menuRef}>
-      <Button variant="ghost" size="sm" onClick={() => setOpen(!open)} className="gap-2">
+      <Button variant="ghost" size="sm" onClick={() => { setOpen(!open); }} className="gap-2">
         {user.avatarUrl ? (
           <img src={user.avatarUrl} alt={user.name} className="w-6 h-6 rounded-full" />
         ) : (

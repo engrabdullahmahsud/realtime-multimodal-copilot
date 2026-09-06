@@ -1,13 +1,15 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { usePathname } from 'next/navigation';
-import { useTheme } from '@/hooks/useTheme';
-import { AuthProvider } from '@/lib/auth';
-import { UserMenu } from '@/components/auth/UserMenu';
-import { Button } from '@/components/ui/button';
 import { clsx } from 'clsx';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useState, useEffect } from 'react';
+
+import { UserMenu } from '@/components/auth/UserMenu';
+import { Button } from '@/components/ui/button';
+import { useTheme } from '@/hooks/useTheme';
+import { AuthProvider } from '@/lib/auth';
+
 
 function Header() {
   const pathname = usePathname();
@@ -80,7 +82,7 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { isDark, toggleTheme } = useTheme();
+  const { isDark } = useTheme();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {

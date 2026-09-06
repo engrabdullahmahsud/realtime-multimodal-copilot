@@ -7,3 +7,4 @@ export * from './conversation';
 export * from './ai';
 export * from './common';
 export * from './auth';
+export * from './database';

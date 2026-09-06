@@ -10,10 +10,13 @@
  * - Proper 401/403 responses
  */
 
-import type { Context, Next } from 'hono';
-import { validateSession, getWorkspaceMembership, hasMinimumRole, SESSION_COOKIE_NAME } from '../lib/session';
-import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import type { PublicUser } from '@copilot/types';
+
+import { validateSession, getWorkspaceMembership, hasMinimumRole, SESSION_COOKIE_NAME } from '../lib/session';
+
+import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
+import type { Context, Next } from 'hono';
+
 
 // Extend Hono's context to carry the authenticated user
 declare module 'hono' {
@@ -67,8 +70,8 @@ export function requireWorkspaceRole(
 
     // Try to get workspace ID from route params or query
     const workspaceId =
-      c.req.param('id') ||
-      c.req.param('workspaceId') ||
+      c.req.param('id') ??
+      c.req.param('workspaceId') ??
       c.req.query('workspaceId');
 
     if (!workspaceId) {

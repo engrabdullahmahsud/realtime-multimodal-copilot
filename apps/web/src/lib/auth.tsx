@@ -1,6 +1,13 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  type ReactNode,
+} from 'react';
 
 // ── Types ──────────────────────────────────────────────────────
 
@@ -30,7 +37,7 @@ export interface AuthContextType extends AuthState {
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001';
 
 // ── Provider ───────────────────────────────────────────────────
 
@@ -40,10 +47,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     loading: true,
     error: null,
   });
-
-  const clearError = useCallback(() => {
-    setState((prev) => ({ ...prev, error: null }));
-  }, []);
 
   const fetchMe = useCallback(async () => {
     try {
@@ -66,7 +69,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Initial load
   useEffect(() => {
-    fetchMe();
+    void fetchMe();
   }, [fetchMe]);
 
   const login = async (email: string, password: string) => {
@@ -83,8 +86,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const data = await res.json();
 
       if (!res.ok) {
-        setState((prev) => ({ ...prev, loading: false, error: data.error || 'Login failed' }));
-        throw new Error(data.error || 'Login failed');
+        setState((prev) => ({ ...prev, loading: false, error: data.error ?? 'Login failed' }));
+        throw new Error(data.error ?? 'Login failed');
       }
 
       setState({ user: data.user, loading: false, error: null });
@@ -110,8 +113,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const data = await res.json();
 
       if (!res.ok) {
-        setState((prev) => ({ ...prev, loading: false, error: data.error || 'Registration failed' }));
-        throw new Error(data.error || 'Registration failed');
+        setState((prev) => ({ ...prev, loading: false, error: data.error ?? 'Registration failed' }));
+        throw new Error(data.error ?? 'Registration failed');
       }
 
       setState({ user: data.user, loading: false, error: null });

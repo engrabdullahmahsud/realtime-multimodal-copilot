@@ -2,12 +2,6 @@
   "extends": "../../packages/config/tsconfig/base.json",
   "compilerOptions": {
     "baseUrl": ".",
-    "paths": {
-      "@/*": ["src/*"],
-      "@copilot/types": ["../../packages/types/src/index.ts"],
-      "@copilot/types/database": ["../../packages/types/src/database.ts"],
-      "@copilot/types/*": ["../../packages/types/src/*"]
-    },
     "plugins": [],
     "incremental": true,
     "skipLibCheck": true,

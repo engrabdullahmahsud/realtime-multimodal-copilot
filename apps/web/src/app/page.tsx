@@ -1,13 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { usePathname } from 'next/navigation';
-import { useAuth } from '@/lib/auth';
-import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
+
+import { useAuth } from '@/lib/auth';
 
 export default function HomePage() {
-  const pathname = usePathname();
   const { user, loading: authLoading } = useAuth();
   const [workspaces, setWorkspaces] = useState<Array<{id: string; name: string}>>([]);
   const [loading, setLoading] = useState(true);
@@ -22,7 +20,7 @@ export default function HomePage() {
     fetch('/api/workspaces')
       .then(res => res.json())
       .then(data => {
-        setWorkspaces(data.workspaces || []);
+        setWorkspaces(data.workspaces ?? []);
         setLoading(false);
       })
       .catch(() => {
@@ -30,7 +28,7 @@ export default function HomePage() {
       });
   }, [user]);
 
-  if (authLoading) return <div className="p-6">Loading...</div>;
+  if (authLoading) {return <div className="p-6">Loading...</div>;}
 
   return (
     <div className="p-6 max-w-md">

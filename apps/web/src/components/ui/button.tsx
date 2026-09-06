@@ -1,6 +1,5 @@
 'use client';
 
-import { useTheme } from '@/hooks/useTheme';
 import { clsx } from 'clsx';
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -17,7 +16,6 @@ export function Button({
   onClick,
   ...props
 }: ButtonProps) {
-  const { isDark, themeMode } = useTheme();
   
   const baseClasses = 'font-medium transition-all duration-200 focus-visible:outline-none';
   const variantClasses = {

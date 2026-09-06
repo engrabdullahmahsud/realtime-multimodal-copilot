@@ -45,9 +45,9 @@ services:
       - DATABASE_URL=postgresql://copilot:copilot123@db:5432/copilot
       - REDIS_URL=redis://redis:6379
       - NODE_ENV=production
-      - PORT=3001
+      - PORT=3002
     ports:
-      - "3001:3001"
+      - "3002:3002"
     depends_on:
       db:
         condition: service_healthy
@@ -63,8 +63,8 @@ services:
       dockerfile: Dockerfile
     container_name: copilot-web
     environment:
-      - NEXT_PUBLIC_API_URL=http://localhost:3001
-      - NEXT_PUBLIC_API_URL=http://api:3001
+      - NEXT_PUBLIC_API_URL=http://localhost:3002
+      - NEXT_PUBLIC_API_URL=http://api:3002
       - NODE_ENV=production
       - PORT=3000
     ports:

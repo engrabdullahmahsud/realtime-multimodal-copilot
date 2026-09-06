@@ -1,10 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+
+import { AuthGuard } from '@/components/auth/AuthGuard';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { useAuth } from '@/lib/auth';
-import { AuthGuard } from '@/components/auth/AuthGuard';
 
 export default function WorkspacesPage() {
   const [workspaces, setWorkspaces] = useState<Array<{id: string; name: string}>>([]);
@@ -12,12 +13,12 @@ export default function WorkspacesPage() {
   const { user } = useAuth();
 
   useEffect(() => {
-    if (!user) return;
+    if (!user) {return;}
     
     fetch('/api/workspaces')
       .then(res => res.json())
       .then(data => {
-        setWorkspaces(data.workspaces || []);
+        setWorkspaces(data.workspaces ?? []);
         setLoading(false);
       })
       .catch(() => {
@@ -25,7 +26,7 @@ export default function WorkspacesPage() {
       });
   }, [user]);
 
-  if (loading) return <div>Loading workspaces...</div>;
+  if (loading) {return <div>Loading workspaces...</div>;}
 
   return (
     <AuthGuard>

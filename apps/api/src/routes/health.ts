@@ -1,4 +1,4 @@
-import { Hono } from 'hono';
+import type { Hono } from 'hono';
 
 export const healthRoute = (app: Hono) => {
   app.get('/health', (c) => {
@@ -6,7 +6,7 @@ export const healthRoute = (app: Hono) => {
       status: 'ok',
       timestamp: new Date().toISOString(),
       version: '0.0.0',
-      environment: process.env.NODE_ENV || 'development',
+      environment: process.env.NODE_ENV ?? 'development',
     });
   });
 

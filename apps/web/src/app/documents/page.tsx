@@ -1,10 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+
+import { AuthGuard } from '@/components/auth/AuthGuard';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { useAuth } from '@/lib/auth';
-import { AuthGuard } from '@/components/auth/AuthGuard';
 
 export default function DocumentsPage() {
   const [documents, setDocuments] = useState<Array<{id: string; name: string}>>([]);
@@ -12,12 +13,12 @@ export default function DocumentsPage() {
   const { user } = useAuth();
 
   useEffect(() => {
-    if (!user) return;
+    if (!user) {return;}
     
     fetch('/api/documents')
       .then(res => res.json())
       .then(data => {
-        setDocuments(data.documents || []);
+        setDocuments(data.documents ?? []);
         setLoading(false);
       })
       .catch(() => {
@@ -25,7 +26,7 @@ export default function DocumentsPage() {
       });
   }, [user]);
 
-  if (loading) return <div>Loading documents...</div>;
+  if (loading) {return <div>Loading documents...</div>;}
 
   return (
     <AuthGuard>
