@@ -4,6 +4,7 @@ import dotenv, { config } from 'dotenv';
 import { eq, inArray, and, desc, isNull, isNotNull } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import { Hono } from 'hono';
+import { cors } from 'hono/cors';
 import postgres from 'postgres';
 import { z } from 'zod';
 
@@ -56,6 +57,17 @@ const db = drizzle(pg);
 
 const app = new Hono();
 
+// CORS middleware for local development
+app.use(
+  "*",
+  cors({
+    origin: "http://localhost:3000",
+    allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
+  })
+);
+
 // Health check (public — no auth required)
 healthRoute(app);
 
@@ -71,7 +83,7 @@ app.use('*', async (c, next) => {
   const path = c.req.path;
 
   // Public routes
-  if (path === '/health' || path.startsWith('/auth/')) {
+  if (path === '/health' || path === '/api/health' || path.startsWith('/auth/')) {
     return next();
   }
 
